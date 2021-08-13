@@ -15,12 +15,23 @@ class Post(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL,
                                on_delete=models.CASCADE,
                                related_name="posts")
-    upvoters = models.ManyToManyField(settings.AUTH_USER_MODEL,
+    voters = models.ManyToManyField(settings.AUTH_USER_MODEL,
+                                    through="PostVote",
                                     related_name="post_votes")
-    vote = models.CharField(max_length=10, null=True, blank=True)
 
     def __str__(self):
         return self.content
+
+
+class PostVote(models.Model):
+    post = models.ForeignKey(Post, related_name="post_id", on_delete=models.CASCADE)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL,
+                               on_delete=models.CASCADE,
+                               related_name="author_id")
+    type = models.CharField(max_length=10, null=True, blank=True)
+
+    def __str__(self):
+        return self.author.username
 
 
 class Comment(models.Model):
@@ -45,7 +56,5 @@ def add_slug_to_post(sender, instance, *args, **kwargs):
         random_string = generate_random_string()
         print("random string: ", slug + "-" + random_string)
         instance.slug = slug + "-" + random_string
-
-
 
 #

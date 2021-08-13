@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from posts.models import Comment, Post
+from posts.models import Comment, Post, PostVote
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -37,6 +37,7 @@ class PostSerializer(serializers.ModelSerializer):
     upvotes_count = serializers.SerializerMethodField()
     downvotes_count = serializers.SerializerMethodField()
     user_has_voted = serializers.SerializerMethodField()
+    user_vote_type = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -53,14 +54,22 @@ class PostSerializer(serializers.ModelSerializer):
         return instance.comments.filter(author=request.user).exists()
 
     def get_upvotes_count(self, instance):
-        return instance.voters.count()
+        return PostVote.objects.filter(post_id=instance.id,
+                                       type="upvote").count()
 
     def get_downvotes_count(self, instance):
-        return instance.voters.count()
+        return PostVote.objects.filter(post_id=instance.id,
+                                       type="downvote").count()
 
     def get_user_has_voted(self, instance):
         request = self.context.get("request")
         return instance.voters.filter(pk=request.user.pk).exists()
+
+    def get_user_vote_type(self, instance):
+        request = self.context.get("request")
+        post_vote = PostVote.objects.filter(post_id=instance.id,
+                                            author_id=request.user.id).first()
+        return post_vote.type if not post_vote==None else None
 
 
 

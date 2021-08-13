@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 
 from posts.api.permissions import IsAuthorOrReadOnly
 from posts.api.serializers import CommentSerializer, PostSerializer
-from posts.models import Comment, Post
+from posts.models import Comment, Post, PostVote
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -21,7 +21,7 @@ class PostViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
 
-class PostUpvoteAPIView(APIView):
+class PostVoteAPIView(APIView):
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticated]
 
@@ -29,9 +29,18 @@ class PostUpvoteAPIView(APIView):
         post = get_object_or_404(Post, slug=slug)
         user = request.user
 
-        post.voters.add(user)
-        post.vote = "upvote"
-        post.save()
+        post_vote = PostVote.objects.filter(post_id=post.id,
+                                            author_id=user.id).first()
+        if post_vote:
+            post_vote.type = request.data['content']
+            post_vote.save()
+        else:
+            PostVote.objects.create(
+                post_id=post.id,
+                author_id=user.id,
+                type=request.data['content']
+            )
+        print(request.data)
 
         serializer_context = {"request": request}
         serializer = self.serializer_class(post, context=serializer_context)
@@ -41,9 +50,10 @@ class PostUpvoteAPIView(APIView):
         post = get_object_or_404(Post, slug=slug)
         user = request.user
 
-        post.voters.add(user)
-        post.vote = "downvote"
-        post.save()
+        post_vote = PostVote.objects.filter(post_id=post.id,
+                                            author_id=user.id)
+        if post_vote:
+            post_vote.delete()
 
         serializer_context = {"request": request}
         serializer = self.serializer_class(post, context=serializer_context)
@@ -109,8 +119,5 @@ class CommentLikeAPIView(APIView):
         serializer_context = {"request": request}
         serializer = self.serializer_class(comment, context=serializer_context)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-
 
 #

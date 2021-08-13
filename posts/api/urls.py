@@ -9,6 +9,10 @@ router.register(r"posts", qv.PostViewSet)
 urlpatterns = [
     path("", include(router.urls)),
 
+    path("post/<slug:slug>/vote/",
+         qv.PostVoteAPIView.as_view(),
+         name="vote-post"),
+
     path("posts/<slug:slug>/comments/",
          qv.CommentListAPIView.as_view(),
          name="comment-list"),
