@@ -53,6 +53,7 @@ INSTALLED_APPS = [
 
     # application
     'users',
+    'posts',
 
     #other packages
     "crispy_forms",
@@ -150,6 +151,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 LOGIN_URL = "/accounts/login/"
 LOGIN_REDIRECT_URL = "/"
@@ -192,7 +194,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 2 # 10 could be a good value to assign in production. Remember: this currently also applies to answers
+    'PAGE_SIZE': 2 # 10 could be a good value to assign in production. Remember: this currently also applies to Comments
 }
 
 
