@@ -24,9 +24,9 @@ TEMPLATE_DIR = os.path.join(MAIN_DIR,"templates")
 SECRET_KEY = 'a%=#$y5gx+9%g+8isi$6ovg1g^&+#@z$z89fmui8i&wp=!-gfb'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['http://127.0.0.1:8000/']
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
@@ -163,6 +163,7 @@ MEDIA_ROOT = os.path.join(MAIN_DIR, 'media')
 STATIC_URL = '/static/'
 STATIC_DIR = os.path.join(MAIN_DIR, 'assets')
 STATIC_DIR2 = os.path.join(MAIN_DIR, 'frontend/dist')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_DIRS = [
     STATIC_DIR,
